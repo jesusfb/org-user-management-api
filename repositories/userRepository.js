@@ -11,6 +11,10 @@ class UserRepository {
     return this.model.findById(id);
   }
 
+  async findByUsername(username) {
+    return this.model.findOne({ username });
+  }
+
   async findAll() {
     return this.model.find({});
   }

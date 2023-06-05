@@ -11,5 +11,7 @@ module.exports = {
   rules: {
     'no-console': 'off',
     'import/no-extraneous-dependencies': 'off',
+    'object-curly-newline': 'off',
+    'no-unused-vars': ['error', { argsIgnorePattern: 'next' }],
   },
 };
