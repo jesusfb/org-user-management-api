@@ -3,7 +3,10 @@ const bcrypt = require('bcryptjs');
 
 const UserRepository = require('../repositories/userRepository');
 const User = require('../models/user');
+const config = require('../config');
+const AuthService = require('../services/authService');
 
+const authService = new AuthService(bcrypt, jwt, config);
 const userRepository = new UserRepository(User);
 
 exports.getUsers = async (req, res, next) => {
@@ -18,16 +21,21 @@ exports.getUsers = async (req, res, next) => {
 exports.registerUser = async (req, res, next) => {
   try {
     const { username, password, role, boss } = req.body;
-    const hashedPassword = bcrypt.hashSync(password, 8);
+    const hashedPassword = authService.hashPassword(password);
     const user = await userRepository.create({
       username,
       password: hashedPassword,
       role,
       boss,
     });
-    await user.save();
 
-    return res.status(201).json(user);
+    return res.status(201).json({
+      data: {
+        username: user.username,
+        role: user.role,
+        boss: user.boss,
+      },
+    });
   } catch (error) {
     return next(error);
   }
@@ -35,19 +43,16 @@ exports.registerUser = async (req, res, next) => {
 
 exports.authenticateUser = async (req, res, next) => {
   try {
-    const VALIDATION_PERIOD_MS = 1000 * 60 * 20;
     const { username, password } = req.body;
     const user = await userRepository.findByUsername(username);
 
-    if (!user || !bcrypt.compareSync(password, user.password)) {
+    if (!user || !authService.checkPassword(password, user.password)) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: VALIDATION_PERIOD_MS,
-    });
+    const token = authService.generateToken(user.id);
 
-    return res.json({ token });
+    return res.status(200).json({ token });
   } catch (error) {
     return next(error);
   }
