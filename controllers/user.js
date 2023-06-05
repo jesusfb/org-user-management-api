@@ -51,8 +51,9 @@ exports.authenticateUser = async (req, res, next) => {
     }
 
     const token = authService.generateToken(user.id);
+    const refreshToken = authService.generateRefreshToken(user.id);
 
-    return res.status(200).json({ token });
+    return res.status(200).json({ token, refreshToken });
   } catch (error) {
     return next(error);
   }
