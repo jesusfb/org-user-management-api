@@ -12,6 +12,10 @@ const router = Router();
  *     responses:
  *       200:
  *         description: A list of users.
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
  */
 router.get('/', userController.getUsers);
 
@@ -33,13 +37,13 @@ router.get('/', userController.getUsers);
  *                 type: string
  *               role:
  *                 type: string
+ *                 enum: ['Administrator', 'Boss', 'Regular User']
+ *                 description: Defaults to 'Regular User'
  *               boss:
  *                 type: string
  *             required:
  *               - username
  *               - password
- *               - role
- *               - boss
  *     responses:
  *       201:
  *         description: User created
