@@ -81,7 +81,7 @@ exports.authenticateUser = async (req, res, next) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const token = authService.generateToken(user.id);
+    const token = authService.generateAccessToken(user.id);
     const refreshToken = authService.generateRefreshToken(user.id);
 
     return res.status(200).json({ token, refreshToken });
