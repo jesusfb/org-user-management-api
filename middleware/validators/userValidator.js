@@ -63,10 +63,6 @@ const validateRegistration = [
         throw new Error('Boss with provided id does not exist');
       }
 
-      if (user.role === 'Regular User') {
-        throw new Error('Boss must be an Administrator or a Boss');
-      }
-
       return true;
     }),
 ];
