@@ -13,5 +13,7 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'object-curly-newline': 'off',
     'no-unused-vars': ['error', { argsIgnorePattern: 'next' }],
+    'implicit-arrow-linebreak': 'off',
+    'function-paren-newline': 'off',
   },
 };

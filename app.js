@@ -3,6 +3,7 @@ const swaggerUi = require('swagger-ui-express');
 
 const userRouter = require('./routes/user');
 const bossRouter = require('./routes/boss');
+const visualizeRouter = require('./routes/visualize');
 
 const config = require('./config');
 const connectDB = require('./database/database');
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use('/users', userRouter);
 app.use('/boss', bossRouter);
+app.use('/visualize', visualizeRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(errorHandler);
 

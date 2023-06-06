@@ -60,9 +60,11 @@ exports.registerUser = async (req, res, next) => {
 
     return res.status(201).json({
       data: {
+        id: user.id,
         username: user.username,
         role: user.role,
         boss: user.boss,
+        subordinates: user.subordinates,
       },
     });
   } catch (error) {
