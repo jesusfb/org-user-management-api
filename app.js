@@ -7,7 +7,7 @@ const visualizeRouter = require('./routes/visualize');
 
 const config = require('./config');
 const connectDB = require('./database/database');
-const swaggerDocument = require('./swaggerDefinition');
+const specs = require('./swaggerDefinition');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -19,7 +19,7 @@ app.use(express.json());
 app.use('/users', userRouter);
 app.use('/boss', bossRouter);
 app.use('/visualize', visualizeRouter);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use(errorHandler);
 
 app.listen(config.PORT, () => {

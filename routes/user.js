@@ -4,6 +4,7 @@ const userController = require('../controllers/user');
 const {
   validateRegistration,
 } = require('../middleware/validators/userValidator');
+const authenticate = require('../middleware/auth');
 
 const router = Router();
 
@@ -12,6 +13,8 @@ const router = Router();
  * /users:
  *   get:
  *     summary: Retrieve a list of users
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: A list of users.
@@ -20,7 +23,7 @@ const router = Router();
  *       500:
  *         description: Internal server error
  */
-router.get('/', userController.getUsers);
+router.get('/', authenticate, userController.getUsers);
 
 /**
  * @swagger
