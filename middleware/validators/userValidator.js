@@ -27,9 +27,9 @@ const validateRegistration = [
     .isLength({ min: 5 })
     .withMessage('Password must be at least 5 characters long'),
   check('role').custom((role, { req }) => {
-    if (role && !['Administrator', 'Boss', 'Regular User'].includes(role)) {
+    if (role && !['Administrator', 'Regular User'].includes(role)) {
       throw new Error(
-        'Invalid role. Valid roles are Administrator, Boss, Regular User',
+        'Invalid role. Valid roles are Administrator and Regular User during registration',
       );
     }
 

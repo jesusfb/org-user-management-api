@@ -35,6 +35,17 @@ exports.registerUser = async (req, res, next) => {
       boss,
     });
 
+    if (boss) {
+      const bossUser = await userRepository.findById(boss);
+      bossUser.subordinates.push(user.id);
+
+      if (bossUser.role === 'Regular User') {
+        bossUser.role = 'Boss';
+      }
+
+      await bossUser.save();
+    }
+
     return res.status(201).json({
       data: {
         username: user.username,

@@ -22,6 +22,12 @@ const UserSchema = new Schema({
     ref: 'User',
     default: null,
   },
+  subordinates: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
 });
 
 module.exports = mongoose.model('User', UserSchema);
