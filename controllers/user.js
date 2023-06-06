@@ -12,8 +12,28 @@ const userRepository = new UserRepository(User);
 
 exports.getUsers = async (req, res, next) => {
   try {
-    const users = await userRepository.findAll({}, '-password');
-    return res.send(users);
+    const { userId } = req;
+    const user = await userRepository.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ errors: ['User not found'] });
+    }
+
+    if (user.role === config.ROLES.REGULAR_USER) {
+      return res.status(200).json({ data: [user] });
+    }
+
+    if (user.role === config.ROLES.BOSS) {
+      const users = await userRepository.findAllSubordinates(userId);
+      return res.status(200).json({ data: users });
+    }
+
+    if (user.role === config.ROLES.ADMINISTRATOR) {
+      const users = await userRepository.findAll();
+      return res.status(200).json({ data: users });
+    }
+
+    return res.status(500).json({ errors: ['Internal server error'] });
   } catch (error) {
     return next(error);
   }

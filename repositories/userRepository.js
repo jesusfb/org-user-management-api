@@ -19,6 +19,7 @@ class UserRepository {
     return this.model.find(query, projection);
   }
 
+  // TODO: Implement this method
   async findAllSubordinates(bossId) {
     return this.model.find({ boss: bossId });
   }
