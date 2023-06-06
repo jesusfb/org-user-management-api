@@ -1,6 +1,9 @@
 const { Router } = require('express');
 
 const userController = require('../controllers/user');
+const {
+  validateRegistration,
+} = require('../middleware/validators/userValidator');
 
 const router = Router();
 
@@ -41,6 +44,7 @@ router.get('/', userController.getUsers);
  *                 description: Defaults to 'Regular User'
  *               boss:
  *                 type: string
+ *                 description: ObjectId of the boss user
  *             required:
  *               - username
  *               - password
@@ -52,7 +56,7 @@ router.get('/', userController.getUsers);
  *       500:
  *         description: Internal server error
  */
-router.post('/', userController.registerUser);
+router.post('/', validateRegistration, userController.registerUser);
 
 /**
  * @swagger

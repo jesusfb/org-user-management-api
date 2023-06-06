@@ -15,8 +15,8 @@ class UserRepository {
     return this.model.findOne({ username });
   }
 
-  async findAll() {
-    return this.model.find({});
+  async findAll(query = {}, projection = '') {
+    return this.model.find(query, projection);
   }
 
   async findAllSubordinates(bossId) {

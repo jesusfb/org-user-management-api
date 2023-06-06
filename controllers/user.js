@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { validationResult } = require('express-validator');
 
 const UserRepository = require('../repositories/userRepository');
 const User = require('../models/user');
@@ -11,7 +12,7 @@ const userRepository = new UserRepository(User);
 
 exports.getUsers = async (req, res, next) => {
   try {
-    const users = await userRepository.findAll();
+    const users = await userRepository.findAll({}, '-password');
     return res.send(users);
   } catch (error) {
     return next(error);
@@ -20,6 +21,11 @@ exports.getUsers = async (req, res, next) => {
 
 exports.registerUser = async (req, res, next) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array().map((e) => e.msg) });
+    }
+
     const { username, password, role, boss } = req.body;
     const hashedPassword = authService.hashPassword(password);
     const user = await userRepository.create({
