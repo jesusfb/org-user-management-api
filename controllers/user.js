@@ -28,22 +28,34 @@ exports.registerUser = async (req, res, next) => {
 
     const { username, password, role, boss } = req.body;
     const hashedPassword = authService.hashPassword(password);
-    const user = await userRepository.create({
-      username,
-      password: hashedPassword,
-      role,
-      boss,
+
+    let user = null;
+    const session = await User.startSession();
+    await session.withTransaction(async () => {
+      user = await userRepository.create(
+        {
+          username,
+          password: hashedPassword,
+          role,
+          boss,
+        },
+        { session },
+      );
+
+      if (boss) {
+        const bossUser = await userRepository.findById(boss);
+        bossUser.subordinates.push(user.id);
+
+        if (bossUser.role === 'Regular User') {
+          bossUser.role = 'Boss';
+        }
+
+        await bossUser.save({ session });
+      }
     });
 
-    if (boss) {
-      const bossUser = await userRepository.findById(boss);
-      bossUser.subordinates.push(user.id);
-
-      if (bossUser.role === 'Regular User') {
-        bossUser.role = 'Boss';
-      }
-
-      await bossUser.save();
+    if (!user) {
+      throw new Error('User creation failed');
     }
 
     return res.status(201).json({
