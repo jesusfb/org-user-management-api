@@ -30,7 +30,7 @@ exports.changeUserBoss = async (req, res) => {
   }
 
   try {
-    await userService.changeUserBoss(userId, bossId);
+    await userService.changeBoss(userId, bossId);
 
     return res.status(200).json({ message: 'User boss changed successfully' });
   } catch (error) {
