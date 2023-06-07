@@ -35,18 +35,18 @@ exports.getUsers = async (req, res, next) => {
     }
 
     if (user.role === config.ROLES.BOSS) {
-      const users = await userRepository.findAllSubordinates(
+      const subordinates = await userRepository.findAllSubordinates(
         userId,
         config.EXCLUDE_USER_PRIVATE_FIELDS,
       );
-      return res.status(200).json({ data: users });
+      return res.status(200).json({ data: [user, ...subordinates] });
     }
 
-    const users = await userRepository.findAll(
+    const allUsers = await userRepository.findAll(
       {},
       config.EXCLUDE_USER_PRIVATE_FIELDS,
     );
-    return res.status(200).json({ data: users });
+    return res.status(200).json({ data: allUsers });
   } catch (error) {
     return next(error);
   }
