@@ -5,10 +5,11 @@ const { validationResult } = require('express-validator');
 const { UserRepository } = require('#repositories');
 const { User } = require('#models');
 const config = require('#config');
-const { AuthService } = require('#services');
+const { AuthService, UserService } = require('#services');
 
 const authService = new AuthService(bcrypt, jwt, config);
 const userRepository = new UserRepository(User);
+const userService = new UserService(userRepository);
 
 exports.getUsers = async (req, res, next) => {
   try {
@@ -35,7 +36,7 @@ exports.getUsers = async (req, res, next) => {
     }
 
     if (user.role === config.ROLES.BOSS) {
-      const subordinates = await userRepository.findAllSubordinates(
+      const subordinates = await userService.findAllSubordinates(
         userId,
         config.EXCLUDE_USER_PRIVATE_FIELDS,
       );
@@ -123,8 +124,8 @@ exports.authenticateUser = async (req, res, next) => {
       throw error;
     }
 
-    const token = authService.generateAccessToken(user.id);
-    const refreshToken = authService.generateRefreshToken(user.id);
+    const token = authService.generateAccessToken(user.id, user.role);
+    const refreshToken = authService.generateRefreshToken(user.id, user.role);
 
     return res.status(200).json({ token, refreshToken });
   } catch (error) {

@@ -24,9 +24,10 @@ module.exports = (req, res, next) => {
   }
 
   try {
-    const decoded = authService.verifyToken(token);
+    const { userId, role } = authService.verifyToken(token);
 
-    req.userId = decoded.id;
+    req.userId = userId;
+    req.role = role;
 
     return next();
   } catch (error) {

@@ -13,14 +13,14 @@ class AuthService {
     return this.hasher.compareSync(password, hashedPassword);
   }
 
-  generateAccessToken(userId) {
-    return this.signer.sign({ id: userId }, this.config.JWT_SECRET, {
+  generateAccessToken(userId, role) {
+    return this.signer.sign({ userId, role }, this.config.JWT_SECRET, {
       expiresIn: this.config.ACCESS_TOKEN_EXPIRY,
     });
   }
 
-  generateRefreshToken(userId) {
-    return this.signer.sign({ id: userId }, this.config.REFRESH_JWT_SECRET, {
+  generateRefreshToken(userId, role) {
+    return this.signer.sign({ userId, role }, this.config.REFRESH_JWT_SECRET, {
       expiresIn: this.config.REFRESH_TOKEN_EXPIRY,
     });
   }
