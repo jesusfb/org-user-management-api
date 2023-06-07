@@ -4,6 +4,7 @@ const { userController } = require('#controllers');
 const {
   userRegistration,
   userAuthentication,
+  userBossChange,
   authenticate,
 } = require('#middleware');
 
@@ -93,6 +94,53 @@ router.post(
   '/authenticate',
   userAuthentication,
   userController.authenticateUser,
+);
+
+/**
+ * @swagger
+ * /users/{userId}:
+ *   patch:
+ *     summary: Change the boss of a user
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The id of the user to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               bossId:
+ *                 type: string
+ *                 description: The id of the new boss
+ *             required:
+ *               - bossId
+ *     responses:
+ *       200:
+ *         description: The user's boss was successfully updated
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+router.patch(
+  '/:userId',
+  userBossChange,
+  authenticate,
+  userController.changeBoss,
 );
 
 module.exports = router;

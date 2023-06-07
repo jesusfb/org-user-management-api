@@ -1,13 +1,25 @@
 const mongoose = require('mongoose');
-const { check } = require('express-validator');
+const { check, param } = require('express-validator');
 
 const { UserRepository } = require('#repositories');
 const { User } = require('#models');
 
 const userRepository = new UserRepository(User);
 
-module.exports = ({ fieldName, required }) => {
-  let validationChain = check(fieldName);
+module.exports = ({ fieldName, fieldType, required }) => {
+  let validationChain = null;
+
+  if (!fieldName) {
+    throw new Error('fieldName is required');
+  }
+
+  if (fieldType === 'param') {
+    validationChain = param(fieldName);
+  } else if (fieldType === 'body') {
+    validationChain = check(fieldName);
+  } else {
+    throw new Error('fieldType must be either param or body');
+  }
 
   if (required) {
     validationChain = validationChain

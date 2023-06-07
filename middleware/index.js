@@ -3,12 +3,12 @@ const errorHandler = require('./errorHandler');
 
 const { userRegistration } = require('./validators/userRegistration');
 const { userAuthentication } = require('./validators/userAuthentication');
-const { bossChange } = require('./validators/bossChange');
+const { userBossChange } = require('./validators/userBossChange');
 
 module.exports = {
   authenticate,
   errorHandler,
   userRegistration,
   userAuthentication,
-  bossChange,
+  userBossChange,
 };

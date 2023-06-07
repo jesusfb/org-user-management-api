@@ -20,33 +20,33 @@ class UserService {
     return subordinates;
   }
 
-  async changeBoss(userId, bossId) {
-    const user = await this.model.findById(userId);
+  async changeBoss(bossId, userId) {
+    const user = await this.userRepository.findById(userId);
     const oldBossId = user.bossId;
-    const newBoss = await this.model.findById(bossId);
+    const newBoss = await this.userRepository.findById(bossId);
 
-    await this.model.updateOne({ _id: userId }, { bossId });
+    await this.userRepository.update({ _id: userId }, { bossId });
 
     if (newBoss.role === 'Regular User') {
-      await this.model.updateOne(
+      await this.userRepository.update(
         { _id: bossId },
         { $push: { subordinates: userId }, $set: { role: 'Boss' } },
       );
     } else {
-      await this.model.updateOne(
+      await this.userRepository.update(
         { _id: bossId },
         { $push: { subordinates: userId } },
       );
     }
 
-    await this.model.updateOne(
+    await this.userRepository.update(
       { _id: oldBossId },
       { $pull: { subordinates: userId } },
     );
 
-    const oldBoss = await this.model.findById(oldBossId);
-    if (oldBoss.subordinates.length === 0) {
-      await this.model.updateOne(
+    const oldBoss = await this.userRepository.findById(oldBossId);
+    if (oldBoss.subordinates.length === 0 && oldBoss.role === 'Boss') {
+      await this.userRepository.update(
         { _id: oldBossId },
         { $set: { role: 'Regular User' } },
       );

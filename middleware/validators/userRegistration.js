@@ -46,7 +46,11 @@ const userRegistration = [
 
     return true;
   }),
-  objectIdValidator({ fieldName: 'bossId', required: false }),
+  objectIdValidator({
+    fieldName: 'bossId',
+    fieldType: 'body',
+    required: false,
+  }),
 ];
 
 module.exports = {

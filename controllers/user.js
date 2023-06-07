@@ -6,6 +6,7 @@ const { UserRepository } = require('#repositories');
 const { User } = require('#models');
 const config = require('#config');
 const { AuthService, UserService } = require('#services');
+const { isSubordinate } = require('#utils');
 
 const authService = new AuthService(bcrypt, jwt, config);
 const userRepository = new UserRepository(User);
@@ -128,6 +129,36 @@ exports.authenticateUser = async (req, res, next) => {
     const refreshToken = authService.generateRefreshToken(user.id, user.role);
 
     return res.status(200).json({ token, refreshToken });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+exports.changeBoss = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array().map((e) => e.msg) });
+  }
+
+  const { userId } = req.params;
+  const { bossId } = req.body;
+
+  if (req.userId === bossId) {
+    return res.status(400).json({ errors: ['User cannot be his own boss'] });
+  }
+
+  if (req.role === config.ROLES.REGULAR_USER) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  if (!isSubordinate(bossId, userId)) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  try {
+    await userService.changeBoss(bossId, userId);
+
+    return res.status(200).json({ message: 'User boss changed successfully' });
   } catch (error) {
     return next(error);
   }
