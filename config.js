@@ -12,4 +12,5 @@ module.exports = {
     REGULAR_USER: 'Regular User',
     BOSS: 'Boss',
   },
+  EXCLUDE_USER_PRIVATE_FIELDS: '-password -__v',
 };

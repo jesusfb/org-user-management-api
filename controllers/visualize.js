@@ -1,10 +1,14 @@
 const { User } = require('#models');
 const { UserRepository } = require('#repositories');
+const { EXCLUDE_USER_PRIVATE_FIELDS } = require('#config');
 
 const userRepository = new UserRepository(User);
 
 async function printHierarchy(userId) {
-  const user = await userRepository.findById(userId, '-password -__v');
+  const user = await userRepository.findById(
+    userId,
+    EXCLUDE_USER_PRIVATE_FIELDS,
+  );
 
   if (!user) {
     return null;

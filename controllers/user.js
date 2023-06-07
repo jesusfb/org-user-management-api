@@ -13,7 +13,10 @@ const userRepository = new UserRepository(User);
 exports.getUsers = async (req, res, next) => {
   try {
     const { userId } = req;
-    const user = await userRepository.findById(userId);
+    const user = await userRepository.findById(
+      userId,
+      config.EXCLUDE_USER_PRIVATE_FIELDS,
+    );
 
     if (!user) {
       const error = new Error('User not found');
@@ -34,12 +37,15 @@ exports.getUsers = async (req, res, next) => {
     if (user.role === config.ROLES.BOSS) {
       const users = await userRepository.findAllSubordinates(
         userId,
-        '-password -__v',
+        config.EXCLUDE_USER_PRIVATE_FIELDS,
       );
       return res.status(200).json({ data: users });
     }
 
-    const users = await userRepository.findAll({}, '-password -__v');
+    const users = await userRepository.findAll(
+      {},
+      config.EXCLUDE_USER_PRIVATE_FIELDS,
+    );
     return res.status(200).json({ data: users });
   } catch (error) {
     return next(error);
