@@ -6,6 +6,7 @@ const {
   userAuthentication,
   userBossChange,
   authenticate,
+  validate,
 } = require('#middleware');
 
 const router = Router();
@@ -61,7 +62,7 @@ router.get('/', authenticate, userController.getUsers);
  *       500:
  *         description: Internal server error
  */
-router.post('/', userRegistration, userController.registerUser);
+router.post('/', validate(userRegistration), userController.registerUser);
 
 /**
  * @swagger
@@ -92,7 +93,7 @@ router.post('/', userRegistration, userController.registerUser);
  */
 router.post(
   '/authenticate',
-  userAuthentication,
+  validate(userAuthentication),
   userController.authenticateUser,
 );
 
@@ -138,7 +139,7 @@ router.post(
  */
 router.patch(
   '/:userId',
-  userBossChange,
+  validate(userBossChange),
   authenticate,
   userController.changeBoss,
 );

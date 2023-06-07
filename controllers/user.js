@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { validationResult } = require('express-validator');
 
 const { UserRepository } = require('#repositories');
 const { User } = require('#models');
@@ -55,11 +54,6 @@ exports.getUsers = async (req, res, next) => {
 
 exports.registerUser = async (req, res, next) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array().map((e) => e.msg) });
-    }
-
     const { username, password, role, bossId } = req.body;
     const hashedPassword = authService.hashPassword(password);
 
@@ -110,11 +104,6 @@ exports.registerUser = async (req, res, next) => {
 
 exports.authenticateUser = async (req, res, next) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array().map((e) => e.msg) });
-    }
-
     const { username, password } = req.body;
     const user = await userRepository.findByUsername(username);
 
@@ -133,12 +122,7 @@ exports.authenticateUser = async (req, res, next) => {
   }
 };
 
-exports.changeBoss = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array().map((e) => e.msg) });
-  }
-
+exports.changeBoss = async (req, res, next) => {
   const { userId } = req.params;
   const { bossId } = req.body;
 
