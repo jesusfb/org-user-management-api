@@ -16,7 +16,15 @@ exports.getUsers = async (req, res, next) => {
     const user = await userRepository.findById(userId);
 
     if (!user) {
-      return res.status(404).json({ errors: ['User not found'] });
+      const error = new Error('User not found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if (!Object.keys(config.ROLES).includes(user.role)) {
+      const error = new Error('Invalid user role');
+      error.statusCode = 400;
+      throw error;
     }
 
     if (user.role === config.ROLES.REGULAR_USER) {
@@ -28,12 +36,8 @@ exports.getUsers = async (req, res, next) => {
       return res.status(200).json({ data: users });
     }
 
-    if (user.role === config.ROLES.ADMINISTRATOR) {
-      const users = await userRepository.findAll();
-      return res.status(200).json({ data: users });
-    }
-
-    return res.status(500).json({ errors: ['Internal server error'] });
+    const users = await userRepository.findAll();
+    return res.status(200).json({ data: users });
   } catch (error) {
     return next(error);
   }
@@ -75,7 +79,9 @@ exports.registerUser = async (req, res, next) => {
     });
 
     if (!user) {
-      throw new Error('User creation failed');
+      const error = new Error('User creation failed');
+      error.statusCode = 500;
+      throw error;
     }
 
     return res.status(201).json({
@@ -98,7 +104,9 @@ exports.authenticateUser = async (req, res, next) => {
     const user = await userRepository.findByUsername(username);
 
     if (!user || !authService.checkPassword(password, user.password)) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      const error = new Error('Invalid credentials');
+      error.statusCode = 401;
+      throw error;
     }
 
     const token = authService.generateAccessToken(user.id);
