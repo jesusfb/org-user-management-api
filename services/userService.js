@@ -3,6 +3,23 @@ class UserService {
     this.userRepository = userRepository;
   }
 
+  async isSubordinate(bossId, subordinateId) {
+    const subordinate = await this.userRepository.findById(subordinateId);
+    if (!subordinate) {
+      throw new Error('Subordinate user does not exist');
+    }
+
+    let currentBoss = await this.userRepository.findById(subordinate.bossId);
+    while (currentBoss) {
+      if (currentBoss._id.toString() === bossId) {
+        return true;
+      }
+      currentBoss = await this.userRepository.findById(currentBoss.bossId);
+    }
+
+    return false;
+  }
+
   async findAllSubordinates(bossId, projection = '') {
     let subordinates = await this.userRepository.findAll(
       { bossId },
@@ -24,6 +41,12 @@ class UserService {
     const user = await this.userRepository.findById(userId);
     const oldBossId = user.bossId;
     const newBoss = await this.userRepository.findById(bossId);
+
+    if (await this.isSubordinate(userId, bossId)) {
+      throw new Error(
+        'Cannot assign a subordinate or their subordinates as boss.',
+      );
+    }
 
     await this.userRepository.update({ _id: userId }, { bossId });
 

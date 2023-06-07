@@ -6,7 +6,6 @@ const { UserRepository } = require('#repositories');
 const { User } = require('#models');
 const config = require('#config');
 const { AuthService, UserService } = require('#services');
-const { isSubordinate } = require('#utils');
 
 const authService = new AuthService(bcrypt, jwt, config);
 const userRepository = new UserRepository(User);
@@ -143,16 +142,22 @@ exports.changeBoss = async (req, res) => {
   const { userId } = req.params;
   const { bossId } = req.body;
 
-  if (req.userId === bossId) {
-    return res.status(400).json({ errors: ['User cannot be his own boss'] });
+  if (userId === bossId) {
+    const error = new Error('User cannot be his own boss');
+    error.statusCode = 400;
+    throw error;
   }
 
   if (req.role === config.ROLES.REGULAR_USER) {
-    return res.status(403).json({ error: 'Forbidden' });
+    const error = new Error('Forbidden');
+    error.statusCode = 403;
+    throw error;
   }
 
-  if (!isSubordinate(bossId, userId)) {
-    return res.status(403).json({ error: 'Forbidden' });
+  if (!userService.isSubordinate(bossId, userId)) {
+    const error = new Error('Forbidden');
+    error.statusCode = 403;
+    throw error;
   }
 
   try {
