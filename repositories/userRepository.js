@@ -11,13 +11,26 @@ class UserRepository {
     return this.model.findById(id, projection);
   }
 
+  async findByUsername(username, projection = '') {
+    return this.model.findOne({ username }, projection);
+  }
+
   async findAll(query = {}, projection = '') {
     return this.model.find(query, projection);
   }
 
-  // TODO: Implement this method
   async findAllSubordinates(bossId, projection = '') {
-    return this.model.find({ boss: bossId }, projection);
+    let subordinates = await this.model.find({ boss: bossId }, projection);
+
+    for (let i = 0; i < subordinates.length; i++) {
+      const subordinateSubordinates = await this.findAllSubordinates(
+        subordinates[i].id,
+        projection,
+      );
+      subordinates = subordinates.concat(subordinateSubordinates);
+    }
+
+    return subordinates;
   }
 }
 

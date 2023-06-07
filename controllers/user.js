@@ -21,7 +21,7 @@ exports.getUsers = async (req, res, next) => {
       throw error;
     }
 
-    if (!Object.keys(config.ROLES).includes(user.role)) {
+    if (!Object.values(config.ROLES).includes(user.role)) {
       const error = new Error('Invalid user role');
       error.statusCode = 400;
       throw error;
@@ -32,7 +32,10 @@ exports.getUsers = async (req, res, next) => {
     }
 
     if (user.role === config.ROLES.BOSS) {
-      const users = await userRepository.findAllSubordinates(userId);
+      const users = await userRepository.findAllSubordinates(
+        userId,
+        '-password -__v',
+      );
       return res.status(200).json({ data: users });
     }
 

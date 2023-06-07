@@ -15,5 +15,7 @@ module.exports = {
     'no-unused-vars': ['error', { argsIgnorePattern: 'next' }],
     'implicit-arrow-linebreak': 'off',
     'function-paren-newline': 'off',
+    'no-await-in-loop': 'off',
+    'no-plusplus': 'off',
   },
 };
