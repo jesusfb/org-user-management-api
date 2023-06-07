@@ -15,7 +15,8 @@ const options = {
     },
     servers: [
       {
-        url: `http://localhost:${config.PORT}`,
+        url: config.SERVER_URL,
+        description: 'Server',
       },
     ],
     components: {

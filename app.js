@@ -11,6 +11,7 @@ const app = express();
 
 connectDB();
 
+app.set('trust proxy', true);
 app.use(express.json());
 
 app.use('/users', userRouter);

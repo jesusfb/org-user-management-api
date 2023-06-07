@@ -2,6 +2,8 @@ require('dotenv').config();
 
 module.exports = {
   PORT: process.env.PORT || 3000,
+  SERVER_URL:
+    process.env.SERVER_URL || `http://localhost:${process.env.PORT || 3000}`,
   JWT_SECRET: process.env.JWT_SECRET,
   REFRESH_JWT_SECRET: process.env.REFRESH_JWT_SECRET,
   DB_CONNECTION_STRING: process.env.DB_CONNECTION_STRING,
