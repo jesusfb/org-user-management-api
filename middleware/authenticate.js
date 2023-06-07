@@ -6,21 +6,23 @@ const { AuthService } = require('#services');
 
 const authService = new AuthService(bcrypt, jwt, config);
 
-function returnInvalidToken(res) {
-  return res.status(401).json({ message: 'Invalid token' });
+function returnInvalidToken() {
+  const error = new Error('Invalid token');
+  error.statusCode = 401;
+  throw error;
 }
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
-    return returnInvalidToken(res);
+    return returnInvalidToken();
   }
 
   const token = authorization.replace('Bearer ', '').trim();
 
   if (!token) {
-    return returnInvalidToken(res);
+    return returnInvalidToken();
   }
 
   try {
@@ -31,6 +33,6 @@ module.exports = (req, res, next) => {
 
     return next();
   } catch (error) {
-    return returnInvalidToken(res);
+    return returnInvalidToken();
   }
 };
