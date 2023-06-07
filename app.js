@@ -4,8 +4,8 @@ const swaggerUi = require('swagger-ui-express');
 const { userRouter, bossRouter, visualizeRouter } = require('#routes');
 const config = require('#config');
 const connectDB = require('#database');
-const specs = require('./swaggerDefinition');
 const { errorHandler } = require('#middleware');
+const specs = require('./swaggerDefinition');
 
 const app = express();
 

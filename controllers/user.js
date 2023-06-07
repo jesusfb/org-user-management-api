@@ -39,7 +39,7 @@ exports.getUsers = async (req, res, next) => {
       return res.status(200).json({ data: users });
     }
 
-    const users = await userRepository.findAll();
+    const users = await userRepository.findAll({}, '-password -__v');
     return res.status(200).json({ data: users });
   } catch (error) {
     return next(error);
