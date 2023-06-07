@@ -18,7 +18,7 @@ const UserSchema = new Schema({
     enum: Object.values(ROLES),
     default: ROLES.REGULAR_USER,
   },
-  boss: {
+  bossId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     default: null,

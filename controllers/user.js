@@ -59,7 +59,7 @@ exports.registerUser = async (req, res, next) => {
       return res.status(400).json({ errors: errors.array().map((e) => e.msg) });
     }
 
-    const { username, password, role, boss } = req.body;
+    const { username, password, role, bossId } = req.body;
     const hashedPassword = authService.hashPassword(password);
 
     let user = null;
@@ -70,13 +70,13 @@ exports.registerUser = async (req, res, next) => {
           username,
           password: hashedPassword,
           role,
-          boss,
+          bossId,
         },
         { session },
       );
 
-      if (boss) {
-        const bossUser = await userRepository.findById(boss);
+      if (bossId) {
+        const bossUser = await userRepository.findById(bossId);
         bossUser.subordinates.push(user.id);
 
         if (bossUser.role === 'Regular User') {
@@ -98,7 +98,7 @@ exports.registerUser = async (req, res, next) => {
         id: user.id,
         username: user.username,
         role: user.role,
-        boss: user.boss,
+        bossId: user.bossId,
         subordinates: user.subordinates,
       },
     });
@@ -109,6 +109,11 @@ exports.registerUser = async (req, res, next) => {
 
 exports.authenticateUser = async (req, res, next) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array().map((e) => e.msg) });
+    }
+
     const { username, password } = req.body;
     const user = await userRepository.findByUsername(username);
 

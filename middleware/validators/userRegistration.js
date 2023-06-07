@@ -1,13 +1,13 @@
-const mongoose = require('mongoose');
 const { check } = require('express-validator');
 
 const { UserRepository } = require('#repositories');
 const { User } = require('#models');
 const { ROLES } = require('#config');
+const { objectIdValidator } = require('#utils');
 
 const userRepository = new UserRepository(User);
 
-const validateUserRegistration = [
+const userRegistration = [
   check('username')
     .notEmpty()
     .withMessage('Username is required')
@@ -30,44 +30,25 @@ const validateUserRegistration = [
   check('role').custom((role, { req }) => {
     if (role && ![ROLES.ADMINISTRATOR, ROLES.REGULAR_USER].includes(role)) {
       throw new Error(
-        'Invalid role. Valid roles are Administrator and Regular User during registration',
+        'Invalid role. Valid roles are `Administrator` and `Regular User` during registration',
       );
     }
 
-    if (role === ROLES.ADMINISTRATOR && req.body.boss) {
-      throw new Error('Administrator cannot have a boss');
+    if (role === ROLES.ADMINISTRATOR && req.body.bossId) {
+      throw new Error('Administrator cannot have a boss, please remove bossId');
     }
 
-    if (role !== ROLES.ADMINISTRATOR && !req.body.boss) {
-      throw new Error('Boss is required for this role');
+    if (role !== ROLES.ADMINISTRATOR && !req.body.bossId) {
+      throw new Error(
+        'Boss is required for this role, please provide a valid bossId',
+      );
     }
 
     return true;
   }),
-  check('boss')
-    .isString()
-    .optional()
-    .withMessage('Boss must be a string')
-    .bail()
-    .custom((boss) => {
-      if (!mongoose.Types.ObjectId.isValid(boss)) {
-        throw new Error('Invalid boss id');
-      }
-
-      return true;
-    })
-    .bail()
-    .custom(async (boss) => {
-      const user = await userRepository.findById(boss);
-
-      if (!user) {
-        throw new Error('Boss with provided id does not exist');
-      }
-
-      return true;
-    }),
+  objectIdValidator({ fieldName: 'bossId', required: false }),
 ];
 
 module.exports = {
-  validateUserRegistration,
+  userRegistration,
 };

@@ -20,7 +20,7 @@ class UserRepository {
   }
 
   async findAllSubordinates(bossId, projection = '') {
-    let subordinates = await this.model.find({ boss: bossId }, projection);
+    let subordinates = await this.model.find({ bossId }, projection);
 
     for (let i = 0; i < subordinates.length; i++) {
       const subordinateSubordinates = await this.findAllSubordinates(

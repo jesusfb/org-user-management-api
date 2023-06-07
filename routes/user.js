@@ -1,7 +1,11 @@
 const { Router } = require('express');
 
 const { userController } = require('#controllers');
-const { validateUserRegistration, authenticate } = require('#middleware');
+const {
+  userRegistration,
+  userAuthentication,
+  authenticate,
+} = require('#middleware');
 
 const router = Router();
 
@@ -42,7 +46,7 @@ router.get('/', authenticate, userController.getUsers);
  *                 type: string
  *                 enum: ['Administrator', 'Boss', 'Regular User']
  *                 description: Defaults to 'Regular User'
- *               boss:
+ *               bossId:
  *                 type: string
  *                 description: ObjectId of the boss user
  *             required:
@@ -56,7 +60,7 @@ router.get('/', authenticate, userController.getUsers);
  *       500:
  *         description: Internal server error
  */
-router.post('/', validateUserRegistration, userController.registerUser);
+router.post('/', userRegistration, userController.registerUser);
 
 /**
  * @swagger
@@ -85,6 +89,10 @@ router.post('/', validateUserRegistration, userController.registerUser);
  *       500:
  *         description: Internal server error
  */
-router.post('/authenticate', userController.authenticateUser);
+router.post(
+  '/authenticate',
+  userAuthentication,
+  userController.authenticateUser,
+);
 
 module.exports = router;

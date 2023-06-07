@@ -43,6 +43,7 @@
     "#repositories": "./repositories/index.js",
     "#routes": "./routes/index.js",
     "#services": "./services/index.js",
-    "#config": "./config.js"
+    "#config": "./config.js",
+    "#utils": "./utils/index.js"
   }
 }
