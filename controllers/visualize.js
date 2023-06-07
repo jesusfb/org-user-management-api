@@ -4,7 +4,8 @@ const UserRepository = require('../repositories/userRepository');
 const userRepository = new UserRepository(User);
 
 async function printHierarchy(userId) {
-  const user = await userRepository.findById(userId);
+  const user = await userRepository.findById(userId, '-password -__v');
+
   if (!user) {
     return null;
   }
@@ -12,9 +13,7 @@ async function printHierarchy(userId) {
   const subordinates = await Promise.all(user.subordinates.map(printHierarchy));
 
   return {
-    username: user.username,
-    id: user.id,
-    role: user.role,
+    ...user.toObject(),
     subordinates,
   };
 }

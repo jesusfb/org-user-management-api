@@ -7,12 +7,8 @@ class UserRepository {
     return this.model.create(data);
   }
 
-  async findById(id) {
-    return this.model.findById(id);
-  }
-
-  async findByUsername(username) {
-    return this.model.findOne({ username });
+  async findById(id, projection = '') {
+    return this.model.findById(id, projection);
   }
 
   async findAll(query = {}, projection = '') {
@@ -20,8 +16,8 @@ class UserRepository {
   }
 
   // TODO: Implement this method
-  async findAllSubordinates(bossId) {
-    return this.model.find({ boss: bossId });
+  async findAllSubordinates(bossId, projection = '') {
+    return this.model.find({ boss: bossId }, projection);
   }
 }
 
