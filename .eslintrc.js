@@ -18,4 +18,10 @@ module.exports = {
     'no-await-in-loop': 'off',
     'no-plusplus': 'off',
   },
+  'import/resolver': {
+    node: {
+      extensions: ['.js'],
+      moduleDirectory: ['node_modules'],
+    },
+  },
 };

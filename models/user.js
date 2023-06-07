@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
-const { ROLES } = require('../config');
+const { ROLES } = require('#config');
 
 const UserSchema = new Schema({
   username: {

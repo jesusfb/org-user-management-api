@@ -1,10 +1,7 @@
 const { Router } = require('express');
 
-const userController = require('../controllers/user');
-const {
-  validateRegistration,
-} = require('../middleware/validators/userValidator');
-const authenticate = require('../middleware/auth');
+const { userController } = require('#controllers');
+const { validateUserRegistration, authenticate } = require('#middleware');
 
 const router = Router();
 
@@ -59,7 +56,7 @@ router.get('/', authenticate, userController.getUsers);
  *       500:
  *         description: Internal server error
  */
-router.post('/', validateRegistration, userController.registerUser);
+router.post('/', validateUserRegistration, userController.registerUser);
 
 /**
  * @swagger

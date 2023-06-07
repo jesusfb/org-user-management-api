@@ -1,6 +1,6 @@
 const { Router } = require('express');
 
-const visualizeController = require('../controllers/visualize');
+const { visualizeController } = require('#controllers');
 
 const router = Router();
 

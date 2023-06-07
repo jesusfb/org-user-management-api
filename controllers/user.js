@@ -2,10 +2,10 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { validationResult } = require('express-validator');
 
-const UserRepository = require('../repositories/userRepository');
-const User = require('../models/user');
-const config = require('../config');
-const AuthService = require('../services/authService');
+const { UserRepository } = require('#repositories');
+const { User } = require('#models');
+const config = require('#config');
+const { AuthService } = require('#services');
 
 const authService = new AuthService(bcrypt, jwt, config);
 const userRepository = new UserRepository(User);

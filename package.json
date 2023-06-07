@@ -34,5 +34,15 @@
     "eslint-plugin-import": "^2.27.5",
     "nodemon": "^2.0.22",
     "prettier": "^2.8.8"
+  },
+  "imports": {
+    "#controllers": "./controllers/index.js",
+    "#database": "./database/database.js",
+    "#middleware": "./middleware/index.js",
+    "#models": "./models/index.js",
+    "#repositories": "./repositories/index.js",
+    "#routes": "./routes/index.js",
+    "#services": "./services/index.js",
+    "#config": "./config.js"
   }
 }

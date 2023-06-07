@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 const { check } = require('express-validator');
 
-const UserRepository = require('../../repositories/userRepository');
-const User = require('../../models/user');
-const { ROLES } = require('../../config');
+const { UserRepository } = require('#repositories');
+const { User } = require('#models');
+const { ROLES } = require('#config');
 
 const userRepository = new UserRepository(User);
 
-const validateRegistration = [
+const validateUserRegistration = [
   check('username')
     .notEmpty()
     .withMessage('Username is required')
@@ -69,5 +69,5 @@ const validateRegistration = [
 ];
 
 module.exports = {
-  validateRegistration,
+  validateUserRegistration,
 };

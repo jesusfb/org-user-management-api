@@ -1,14 +1,11 @@
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 
-const userRouter = require('./routes/user');
-const bossRouter = require('./routes/boss');
-const visualizeRouter = require('./routes/visualize');
-
-const config = require('./config');
-const connectDB = require('./database/database');
+const { userRouter, bossRouter, visualizeRouter } = require('#routes');
+const config = require('#config');
+const connectDB = require('#database');
 const specs = require('./swaggerDefinition');
-const errorHandler = require('./middleware/errorHandler');
+const { errorHandler } = require('#middleware');
 
 const app = express();
 
