@@ -28,6 +28,10 @@ module.exports = (req, res, next) => {
   try {
     const { userId, role } = authService.verifyToken(token);
 
+    if (!userId || !role) {
+      return returnInvalidToken();
+    }
+
     req.userId = userId;
     req.role = role;
 
