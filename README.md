@@ -12,13 +12,26 @@ This repository contains a Node.js application that implements a simple organiza
 
 ## REST API Endpoints
 
-1. **Register User**: This endpoint is used to register a new user.
-2. **Authenticate User**: This endpoint is used to authenticate a user.
-3. **List Users**: This endpoint is used to get a list of users. The list depends on the user's role:
-   - The administrator can see all users.
-   - A boss can see themselves and all their subordinates (recursively).
-   - A regular user can only see themselves.
-4. **Change User's Boss**: This endpoint is used to change a user's boss. Only a boss can do this and only for their subordinates.
+### User Registration and Management
+
+- **Register User**: This endpoint (POST /users) is used to register a new user.
+- **Change User's Boss**: This endpoint (PATCH /users/{userId}) is used to change a user's boss. Only a boss can do this and only for their subordinates.
+
+### User Authentication and Session Management
+
+- **Authenticate User**: This endpoint (POST /users/authenticate) is used to authenticate a user.
+- **Refresh Access Token**: This endpoint (POST /users/refresh) is used to refresh the user's access token when it has expired.
+
+### User Data Access
+
+- **List Users**: This endpoint (GET /users) is used to get a list of users. The list depends on the user's role:
+  - The administrator can see all users.
+  - A boss can see themselves and all their subordinates (recursively).
+  - A regular user can only see themselves.
+
+### System Monitoring or Debugging
+
+- **Visualize User Hierarchy**: This endpoint (GET /visualize) is used to retrieve the user hierarchy for monitoring or debugging purposes.
 
 ## Deployment
 

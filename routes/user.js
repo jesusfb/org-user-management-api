@@ -73,7 +73,7 @@ router.post('/', validate(userRegistration), userController.registerUser);
  * /users/authenticate:
  *   post:
  *     tags:
- *       - User Authentication
+ *       - User Authentication and Session Management
  *     summary: Authenticate a user
  *     requestBody:
  *       required: true
@@ -157,7 +157,7 @@ router.patch(
  * /users/refresh:
  *   post:
  *     tags:
- *       - User Authentication
+ *       - User Authentication and Session Management
  *     summary: Refresh access token
  *     requestBody:
  *       required: true
