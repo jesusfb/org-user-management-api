@@ -14,9 +14,9 @@ const connectDB = async (options) => {
       useUnifiedTopology: true,
     });
 
-    if (options.logging) console.log('MongoDB connection SUCCESS');
+    if (options?.logging) console.log('MongoDB connection SUCCESS');
   } catch (error) {
-    if (options.logging) console.error('MongoDB connection FAIL', error);
+    if (options?.logging) console.error('MongoDB connection FAIL', error);
     process.exit(1);
   }
 };
