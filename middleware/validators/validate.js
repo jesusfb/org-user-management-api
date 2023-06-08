@@ -9,13 +9,12 @@ const validate = (checks) => async (req, res, next) => {
       return next();
     }
 
-    const error = new Error(
-      errors
-        .array()
-        .map((e) => e.msg)
-        .join('\n'),
-    );
-    error.statusCode = 400;
+    const errorArray = errors.array().map((e) => e.msg);
+
+    const error = new Error();
+    error.messages = errorArray;
+    error.statusCode = req.customStatusCode || 400;
+
     throw error;
   } catch (error) {
     return next(error);

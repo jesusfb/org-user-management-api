@@ -1,4 +1,11 @@
 module.exports = (err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.statusCode || 500).json({ errors: [err.message] });
+  if (err) {
+    if (process.env.NODE_ENV !== 'test') console.error(err);
+    const status = err.statusCode || 500;
+    res.status(status).json({
+      errors: err.messages || ['Internal Server Error'],
+    });
+  } else {
+    next();
+  }
 };

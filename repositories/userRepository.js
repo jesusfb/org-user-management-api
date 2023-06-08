@@ -22,6 +22,10 @@ class UserRepository {
   async update(id, data) {
     return this.model.updateOne({ _id: id }, data);
   }
+
+  async deleteMany(filter = {}) {
+    return this.model.deleteMany(filter);
+  }
 }
 
 module.exports = UserRepository;

@@ -13,11 +13,13 @@ const userRegistration = [
     .withMessage('Username is required')
     .isLength({ min: 5 })
     .withMessage('Username must be at least 5 characters long')
-    .custom(async (username) => {
+    .custom(async (username, { req }) => {
       const user = await userRepository.findByUsername(username);
 
       if (user) {
-        throw new Error('Username already in use');
+        const error = new Error('Username already exists');
+        req.customStatusCode = 409;
+        throw error;
       }
 
       return true;
@@ -25,6 +27,7 @@ const userRegistration = [
   check('password')
     .notEmpty()
     .withMessage('Password is required')
+    .bail()
     .isLength({ min: 5 })
     .withMessage('Password must be at least 5 characters long'),
   check('role').custom((role, { req }) => {

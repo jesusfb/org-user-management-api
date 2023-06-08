@@ -2,16 +2,21 @@ const mongoose = require('mongoose');
 
 const config = require('#config');
 
-const connectDB = async () => {
+const connectDB = async (options) => {
+  let connectionString =
+    process.env.NODE_ENV === 'test'
+      ? config.TEST_DB_CONNECTION_STRING
+      : config.DB_CONNECTION_STRING;
+
   try {
-    await mongoose.connect(config.DB_CONNECTION_STRING, {
+    await mongoose.connect(connectionString, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
 
-    console.log('MongoDB connection SUCCESS');
+    if (options.logging) console.log('MongoDB connection SUCCESS');
   } catch (error) {
-    console.error('MongoDB connection FAIL', error);
+    if (options.logging) console.error('MongoDB connection FAIL', error);
     process.exit(1);
   }
 };

@@ -63,6 +63,8 @@ router.get('/', authenticate, userController.getUsers);
  *         description: User created
  *       400:
  *         description: Bad request
+ *       409:
+ *        description: Username already exists
  *       500:
  *         description: Internal server error
  */

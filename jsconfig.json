@@ -3,6 +3,7 @@
     "target": "es6",
     "baseUrl": "./",
     "paths": {
+      "#app": ["./app.js"],
       "#controllers": ["./controllers/index.js"],
       "#database": ["./database/database.js"],
       "#middleware": ["./middleware/index.js"],

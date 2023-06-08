@@ -22,3 +22,5 @@ app.use(errorHandler);
 app.listen(config.PORT, () => {
   console.log(`Server started and listening on port ${config.PORT}`);
 });
+
+module.exports = app;
