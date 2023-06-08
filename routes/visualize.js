@@ -8,6 +8,8 @@ const router = Router();
  * @swagger
  * /visualize:
  *   get:
+ *     tags:
+ *       - System Monitoring or Debugging
  *     summary: Retrieve the user hierarchy (only for testing purposes)
  *     responses:
  *       200:

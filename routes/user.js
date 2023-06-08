@@ -15,6 +15,8 @@ const router = Router();
  * @swagger
  * /users:
  *   get:
+ *     tags:
+ *       - User Data Access
  *     summary: Retrieve a list of users
  *     security:
  *       - bearerAuth: []
@@ -32,6 +34,8 @@ router.get('/', authenticate, userController.getUsers);
  * @swagger
  * /users:
  *   post:
+ *     tags:
+ *       - User Management
  *     summary: Register a new user
  *     requestBody:
  *       required: true
@@ -68,6 +72,8 @@ router.post('/', validate(userRegistration), userController.registerUser);
  * @swagger
  * /users/authenticate:
  *   post:
+ *     tags:
+ *       - User Authentication
  *     summary: Authenticate a user
  *     requestBody:
  *       required: true
@@ -101,6 +107,8 @@ router.post(
  * @swagger
  * /users/{userId}:
  *   patch:
+ *     tags:
+ *       - User Management
  *     summary: Change the boss of a user
  *     security:
  *       - bearerAuth: []
@@ -148,6 +156,8 @@ router.patch(
  * @swagger
  * /users/refresh:
  *   post:
+ *     tags:
+ *       - User Authentication
  *     summary: Refresh access token
  *     requestBody:
  *       required: true
