@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 
 const config = require('#config');
 const { AuthService } = require('#services');
+const { jwtErrorHandler } = require('#utils');
 
 const authService = new AuthService(bcrypt, jwt, config);
 
@@ -37,6 +38,6 @@ module.exports = (req, res, next) => {
 
     return next();
   } catch (error) {
-    return returnInvalidToken();
+    throw jwtErrorHandler(error);
   }
 };

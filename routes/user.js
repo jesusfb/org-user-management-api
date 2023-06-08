@@ -144,4 +144,30 @@ router.patch(
   userController.changeBoss,
 );
 
+/**
+ * @swagger
+ * /users/refresh:
+ *   post:
+ *     summary: Refresh access token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *             required:
+ *               - refreshToken
+ *     responses:
+ *       200:
+ *         description: Access token refreshed
+ *       401:
+ *         description: Invalid refresh token
+ *       500:
+ *         description: Internal server error
+ */
+router.post('/refresh', userController.refreshToken);
+
 module.exports = router;

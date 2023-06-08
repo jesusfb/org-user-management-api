@@ -5,6 +5,7 @@ const { UserRepository } = require('#repositories');
 const { User } = require('#models');
 const config = require('#config');
 const { AuthService, UserService } = require('#services');
+const { jwtErrorHandler } = require('#utils');
 
 const authService = new AuthService(bcrypt, jwt, config);
 const userRepository = new UserRepository(User);
@@ -150,5 +151,17 @@ exports.changeBoss = async (req, res, next) => {
     return res.status(200).json({ message: 'User boss changed successfully' });
   } catch (error) {
     return next(error);
+  }
+};
+
+exports.refreshToken = async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body;
+    const { userId, role } = authService.verifyRefreshToken(refreshToken);
+    const newToken = authService.generateAccessToken(userId, role);
+
+    return res.status(200).json({ token: newToken });
+  } catch (error) {
+    return next(jwtErrorHandler(error));
   }
 };
