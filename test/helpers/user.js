@@ -56,10 +56,22 @@ async function changeUserBoss(token, userId, bossId) {
   return { data, status: response.status };
 }
 
+async function refreshAccessToken(refreshToken) {
+  const response = await fetch(`${SERVER_URL}/users/refresh`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken }),
+  });
+
+  const data = await response.json();
+  return { data, status: response.status };
+}
+
 module.exports = {
   registerUser,
   authenticateUser,
   getUsers,
   getToken,
   changeUserBoss,
+  refreshAccessToken,
 };

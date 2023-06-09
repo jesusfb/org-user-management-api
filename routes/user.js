@@ -63,8 +63,10 @@ router.get('/', authenticate, userController.getUsers);
  *         description: User created
  *       400:
  *         description: Bad request
+ *       404:
+ *         description: User not found
  *       409:
- *        description: Username already exists
+ *         description: Username already exists
  *       500:
  *         description: Internal server error
  */
@@ -175,6 +177,8 @@ router.patch(
  *     responses:
  *       200:
  *         description: Access token refreshed
+ *       400:
+ *         description: Bad request
  *       401:
  *         description: Invalid refresh token
  *       500:

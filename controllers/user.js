@@ -178,11 +178,18 @@ exports.changeBoss = async (req, res, next) => {
 exports.refreshToken = async (req, res, next) => {
   try {
     const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      const error = new Error('Refresh token not provided');
+      error.statusCode = 400;
+      throw error;
+    }
+
     const { userId, role } = authService.verifyRefreshToken(refreshToken);
     const newToken = authService.generateAccessToken(userId, role);
 
     return res.status(200).json({ token: newToken });
   } catch (error) {
-    return next(jwtErrorHandler(error));
+    return next(error.statusCode ? error : jwtErrorHandler(error, next));
   }
 };

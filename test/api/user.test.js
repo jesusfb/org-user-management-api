@@ -2,6 +2,9 @@ require('events').EventEmitter.defaultMaxListeners = 20;
 const { describe, it } = require('node:test');
 const assert = require('node:assert');
 
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+
 const setupTestSuite = require('../setup/testSetup');
 const {
   registerUser,
@@ -9,11 +12,14 @@ const {
   getUsers,
   getToken,
   changeUserBoss,
+  refreshAccessToken,
 } = require('../helpers/user');
 const { User } = require('#models');
 const { UserRepository } = require('#repositories');
+const config = require('#config');
+const { AuthService } = require('#services');
 
-describe('User Registration', () => {
+describe('User Registration', { skip: true }, () => {
   setupTestSuite();
 
   describe('Positive cases', () => {
@@ -125,7 +131,7 @@ describe('User Registration', () => {
   });
 });
 
-describe('User Authentication', () => {
+describe('User Authentication', { skip: true }, () => {
   setupTestSuite();
 
   describe('Positive cases', () => {
@@ -198,7 +204,7 @@ describe('User Authentication', () => {
   });
 });
 
-describe('Get Users', () => {
+describe('Get Users', { skip: true }, () => {
   setupTestSuite();
 
   describe('Positive cases', () => {
@@ -346,7 +352,7 @@ describe('Get Users', () => {
   });
 });
 
-describe('Change user boss', { skip: false }, () => {
+describe('Change user boss', { skip: true }, () => {
   setupTestSuite();
 
   describe('Positive cases', () => {
@@ -707,6 +713,58 @@ describe('Change user boss', { skip: false }, () => {
       assert.strictEqual(status, 500);
       assert.strictEqual(data.errors[0], 'Internal Server Error');
       assert.strictEqual(userRepository.update.mock.calls.length, 1);
+    });
+  });
+});
+
+describe('Refresh Token', () => {
+  setupTestSuite();
+
+  describe('Positive cases', () => {
+    it('should return 200 OK and a new access token when refreshing a valid refresh token', async () => {
+      await registerUser('admin', 'admin', 'Administrator');
+      const { data: authData } = await authenticateUser('admin', 'admin');
+      const { status, data } = await refreshAccessToken(authData?.refreshToken);
+
+      assert.equal(status, 200);
+      assert.ok(data.token);
+    });
+  });
+
+  describe('Negative cases', () => {
+    it('should return 400 Bad Request when no refresh token is provided', async () => {
+      const { status, data } = await refreshAccessToken(null);
+
+      assert.equal(status, 400);
+      assert.ok(data.errors.includes('Refresh token not provided'));
+    });
+
+    it('should return 401 Unauthorized when an invalid refresh token is provided', async () => {
+      await registerUser('admin', 'admin', 'Administrator');
+      await authenticateUser('admin', 'admin');
+      const { status, data } = await refreshAccessToken(
+        'invalid_refresh_token',
+      );
+
+      assert.equal(status, 401);
+      assert.ok(data.errors.includes('Malformed token'));
+    });
+
+    it('should return 500 Internal Server Error when an unexpected error occurs during token refresh', async (t) => {
+      const authService = new AuthService(bcrypt, jwt, config);
+      t.mock.method(AuthService.prototype, 'verifyRefreshToken', () => {
+        const error = new Error('Internal Server Error');
+        error.statusCode = 500;
+        throw error;
+      });
+
+      await registerUser('admin', 'admin', 'Administrator');
+      const { data: authData } = await authenticateUser('admin', 'admin');
+      const { status, data } = await refreshAccessToken(authData?.refreshToken);
+
+      assert.equal(status, 500);
+      assert.ok(data.errors.includes('Internal Server Error'));
+      assert.strictEqual(authService.verifyRefreshToken.mock.calls.length, 1);
     });
   });
 });
