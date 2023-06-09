@@ -19,7 +19,7 @@ const { UserRepository } = require('#repositories');
 const config = require('#config');
 const { AuthService } = require('#services');
 
-describe('User Registration', { skip: true }, () => {
+describe('User Registration', () => {
   setupTestSuite();
 
   describe('Positive cases', () => {
@@ -131,7 +131,7 @@ describe('User Registration', { skip: true }, () => {
   });
 });
 
-describe('User Authentication', { skip: true }, () => {
+describe('User Authentication', () => {
   setupTestSuite();
 
   describe('Positive cases', () => {
@@ -204,7 +204,7 @@ describe('User Authentication', { skip: true }, () => {
   });
 });
 
-describe('Get Users', { skip: true }, () => {
+describe('Get Users', () => {
   setupTestSuite();
 
   describe('Positive cases', () => {
@@ -352,7 +352,7 @@ describe('Get Users', { skip: true }, () => {
   });
 });
 
-describe('Change user boss', { skip: true }, () => {
+describe('Change user boss', () => {
   setupTestSuite();
 
   describe('Positive cases', () => {
