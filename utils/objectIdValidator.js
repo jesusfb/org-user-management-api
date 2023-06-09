@@ -42,13 +42,18 @@ module.exports = ({ fieldName, fieldType, required }) => {
       return true;
     })
     .bail()
-    .custom(async (value) => {
+    .custom(async (value, { req }) => {
       const user = await userRepository.findById(value);
 
       if (!user) {
-        throw new Error(`User with provided ${fieldName} does not exist`);
+        const user = new Error(
+          `User with provided ${fieldName} does not exist`,
+        );
+        req.customStatusCode = 404;
+        throw user;
       }
 
       return true;
-    });
+    })
+    .bail();
 };

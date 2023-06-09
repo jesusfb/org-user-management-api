@@ -42,9 +42,24 @@ async function getUsers(token) {
   return { data, status: response.status };
 }
 
+async function changeUserBoss(token, userId, bossId) {
+  const response = await fetch(`${SERVER_URL}/users/${userId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ bossId }),
+  });
+
+  const data = await response.json();
+  return { data, status: response.status };
+}
+
 module.exports = {
   registerUser,
   authenticateUser,
   getUsers,
   getToken,
+  changeUserBoss,
 };

@@ -3,7 +3,11 @@ class UserService {
     this.userRepository = userRepository;
   }
 
-  async isSubordinate(bossId, subordinateId) {
+  async isBossOf(bossId, subordinateId) {
+    if (bossId === subordinateId) {
+      return true;
+    }
+
     const subordinate = await this.userRepository.findById(subordinateId);
     if (!subordinate) {
       throw new Error('Subordinate user does not exist');
@@ -41,12 +45,6 @@ class UserService {
     const user = await this.userRepository.findById(userId);
     const oldBossId = user.bossId;
     const newBoss = await this.userRepository.findById(bossId);
-
-    if (await this.isSubordinate(userId, bossId)) {
-      throw new Error(
-        'Cannot assign a subordinate or their subordinates as boss.',
-      );
-    }
 
     await this.userRepository.update({ _id: userId }, { bossId });
 

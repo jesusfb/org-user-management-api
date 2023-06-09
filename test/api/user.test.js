@@ -1,3 +1,4 @@
+require('events').EventEmitter.defaultMaxListeners = 20;
 const { describe, it } = require('node:test');
 const assert = require('node:assert');
 
@@ -7,11 +8,12 @@ const {
   authenticateUser,
   getUsers,
   getToken,
+  changeUserBoss,
 } = require('../helpers/user');
 const { User } = require('#models');
 const { UserRepository } = require('#repositories');
 
-describe('User Registration', { skip: false }, () => {
+describe('User Registration', () => {
   setupTestSuite();
 
   describe('Positive cases', () => {
@@ -66,18 +68,6 @@ describe('User Registration', { skip: false }, () => {
       );
     });
 
-    it('should return 400 Bad Request for nonexistent bossId', async () => {
-      const { data, status } = await registerUser(
-        'admin',
-        'admin',
-        'Regular User',
-        '648188abd50e9168343d094a',
-      );
-
-      assert.equal(status, 400);
-      assert.equal(data.errors[0], 'User with provided bossId does not exist');
-    });
-
     it('should return 400 Bad Request for wrong role association', async () => {
       const { data, status } = await registerUser(
         'admin',
@@ -90,6 +80,18 @@ describe('User Registration', { skip: false }, () => {
         data.errors[0],
         'Boss is required for this role, please provide a valid bossId',
       );
+    });
+
+    it('should return 404 Not Found for nonexistent bossId', async () => {
+      const { data, status } = await registerUser(
+        'admin',
+        'admin',
+        'Regular User',
+        '648188abd50e9168343d094a',
+      );
+
+      assert.equal(status, 404);
+      assert.equal(data.errors[0], 'User with provided bossId does not exist');
     });
 
     it('should return 409 Conflict for registering user with existing username', async () => {
@@ -123,7 +125,7 @@ describe('User Registration', { skip: false }, () => {
   });
 });
 
-describe('User Authentication', { skip: false }, () => {
+describe('User Authentication', () => {
   setupTestSuite();
 
   describe('Positive cases', () => {
@@ -196,7 +198,7 @@ describe('User Authentication', { skip: false }, () => {
   });
 });
 
-describe('Get Users', { skip: false }, () => {
+describe('Get Users', () => {
   setupTestSuite();
 
   describe('Positive cases', () => {
@@ -340,6 +342,371 @@ describe('Get Users', { skip: false }, () => {
       assert.strictEqual(status, 500);
       assert.strictEqual(data.errors[0], 'Internal Server Error');
       assert.strictEqual(userRepository.findById.mock.calls.length, 1);
+    });
+  });
+});
+
+describe('Change user boss', { skip: false }, () => {
+  setupTestSuite();
+
+  describe('Positive cases', () => {
+    it("should return 200 OK when Boss changes subordinate's boss", async () => {
+      const { data: administratorData } = await registerUser(
+        'admin',
+        'admin',
+        'Administrator',
+      );
+      const { data: bossData } = await registerUser(
+        'boss1',
+        'boss1',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { data: subordinateData } = await registerUser(
+        'subordinate',
+        'subordinate',
+        'Regular User',
+        bossData.data._id,
+      );
+      const { data: newBossData } = await registerUser(
+        'newboss',
+        'newboss',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { token } = await getToken('boss1', 'boss1');
+      const { status } = await changeUserBoss(
+        token,
+        subordinateData.data._id,
+        newBossData.data._id,
+      );
+
+      assert.equal(status, 200);
+    });
+  });
+
+  describe('Negative cases', () => {
+    it('should return 400 Bad request if a boss attempts to change their own boss', async () => {
+      const { data: administratorData } = await registerUser(
+        'admin',
+        'admin',
+        'Administrator',
+      );
+      const { token } = await getToken('admin', 'admin');
+      const { status } = await changeUserBoss(
+        token,
+        administratorData.data._id,
+        administratorData.data._id,
+      );
+
+      assert.equal(status, 400);
+    });
+
+    it('should return 400 Bad request if user try to set himself as boss', async () => {
+      const { data: administratorData } = await registerUser(
+        'admin',
+        'admin',
+        'Administrator',
+      );
+      const { data: bossData } = await registerUser(
+        'boss1',
+        'boss1',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { token } = await getToken('boss1', 'boss1');
+      const { status } = await changeUserBoss(
+        token,
+        bossData.data._id,
+        bossData.data._id,
+      );
+
+      assert.equal(status, 400);
+    });
+
+    it('should return 401 Unauthorized for missing token', async () => {
+      const { data: administratorData } = await registerUser(
+        'admin',
+        'admin',
+        'Administrator',
+      );
+      const { data: bossData } = await registerUser(
+        'boss1',
+        'boss1',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { data: subordinateData } = await registerUser(
+        'subordinate',
+        'subordinate',
+        'Regular User',
+        bossData.data._id,
+      );
+      const { data: newBossData } = await registerUser(
+        'newboss',
+        'newboss',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { status } = await changeUserBoss(
+        null,
+        subordinateData.data._id,
+        newBossData.data._id,
+      );
+
+      assert.equal(status, 401);
+    });
+
+    it('should return 401 Unauthorized for invalid token', async () => {
+      const { data: administratorData } = await registerUser(
+        'admin',
+        'admin',
+        'Administrator',
+      );
+      const { data: bossData } = await registerUser(
+        'boss1',
+        'boss1',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { data: subordinateData } = await registerUser(
+        'subordinate',
+        'subordinate',
+        'Regular User',
+        bossData.data._id,
+      );
+      const { data: newBossData } = await registerUser(
+        'newboss',
+        'newboss',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { status } = await changeUserBoss(
+        'invalid_token',
+        subordinateData.data._id,
+        newBossData.data._id,
+      );
+
+      assert.equal(status, 401);
+    });
+
+    it('should return 403 Forbidden for Regular User', async () => {
+      const { data: administratorData } = await registerUser(
+        'admin',
+        'admin',
+        'Administrator',
+      );
+      const { data: bossData } = await registerUser(
+        'boss1',
+        'boss1',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { data: subordinateData } = await registerUser(
+        'subordinate',
+        'subordinate',
+        'Regular User',
+        bossData.data._id,
+      );
+      const { data: newBossData } = await registerUser(
+        'newboss',
+        'newboss',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { token } = await getToken('subordinate', 'subordinate');
+      const { status } = await changeUserBoss(
+        token,
+        subordinateData.data._id,
+        newBossData.data._id,
+      );
+
+      assert.equal(status, 403);
+    });
+
+    it('should return 403 Forbidden for Boss who is not subordinate boss', async () => {
+      const { data: administratorData } = await registerUser(
+        'admin',
+        'admin',
+        'Administrator',
+      );
+      const { data: bossData } = await registerUser(
+        'boss1',
+        'boss1',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { data: subordinateData } = await registerUser(
+        'subordinate',
+        'subordinate',
+        'Regular User',
+        bossData.data._id,
+      );
+      const { data: newBossData } = await registerUser(
+        'newboss',
+        'newboss',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { token } = await getToken('newboss', 'newboss');
+      const { status } = await changeUserBoss(
+        token,
+        subordinateData.data._id,
+        newBossData.data._id,
+      );
+
+      assert.equal(status, 403);
+    });
+
+    it('should return 404 Not Found for invalid subordinate id', async () => {
+      const { data: administratorData } = await registerUser(
+        'admin',
+        'admin',
+        'Administrator',
+      );
+      const { data: bossData } = await registerUser(
+        'boss1',
+        'boss1',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { data: subordinateData } = await registerUser(
+        'subordinate',
+        'subordinate',
+        'Regular User',
+        bossData.data._id,
+      );
+      const { data: newBossData } = await registerUser(
+        'newboss',
+        'newboss',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { token } = await getToken('subordinate', 'subordinate');
+      const nonExistentUserId = '6089f6e27d38faaedcbd0219';
+      const { status } = await changeUserBoss(
+        token,
+        nonExistentUserId,
+        newBossData.data._id,
+      );
+
+      assert.equal(status, 404);
+    });
+
+    it('should return 404 Not Found for invalid new boss id', async () => {
+      const { data: administratorData } = await registerUser(
+        'admin',
+        'admin',
+        'Administrator',
+      );
+      const { data: bossData } = await registerUser(
+        'boss1',
+        'boss1',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { data: subordinateData } = await registerUser(
+        'subordinate',
+        'subordinate',
+        'Regular User',
+        bossData.data._id,
+      );
+      const { token } = await getToken('boss1', 'boss1');
+      const nonExistentUserId = '6089f6e27d38faaedcbd0219';
+      const { status } = await changeUserBoss(
+        token,
+        subordinateData.data._id,
+        nonExistentUserId,
+      );
+
+      assert.equal(status, 404);
+    });
+
+    it('should return 404 Not Found if the user does not exist', async () => {
+      const { data: administratorData } = await registerUser(
+        'admin',
+        'admin',
+        'Administrator',
+      );
+      const { data: bossData } = await registerUser(
+        'boss1',
+        'boss1',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { token } = await getToken('admin', 'admin');
+      const nonExistentUserId = '6089f6e27d38faaedcbd0219';
+      const { status } = await changeUserBoss(
+        token,
+        nonExistentUserId,
+        bossData.data._id,
+      );
+
+      assert.equal(status, 404);
+    });
+
+    it('should return 404 Not Found if the new boss does not exist', async () => {
+      const { data: administratorData } = await registerUser(
+        'admin',
+        'admin',
+        'Administrator',
+      );
+      const { data: subordinateData } = await registerUser(
+        'subordinate',
+        'subordinate',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { token } = await getToken('admin', 'admin');
+      const nonExistentBossId = '6089f6e27d38faaedcbd0219';
+      const { status } = await changeUserBoss(
+        token,
+        subordinateData.data._id,
+        nonExistentBossId,
+      );
+
+      assert.equal(status, 404);
+    });
+
+    it('should return 500 Internal Server Error when something goes wrong on the server', async (t) => {
+      const { data: administratorData } = await registerUser(
+        'admin',
+        'admin',
+        'Administrator',
+      );
+      const { data: bossData } = await registerUser(
+        'boss1',
+        'boss1',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { data: subordinateData } = await registerUser(
+        'subordinate',
+        'subordinate',
+        'Regular User',
+        bossData.data._id,
+      );
+      const { data: newBossData } = await registerUser(
+        'newboss',
+        'newboss',
+        'Regular User',
+        administratorData.data._id,
+      );
+      const { token } = await getToken('boss1', 'boss1');
+
+      t.mock.method(UserRepository.prototype, 'update', async () => {
+        throw new Error('Internal Server Error');
+      });
+      const userRepository = new UserRepository(User);
+      const { data, status } = await changeUserBoss(
+        token,
+        subordinateData.data._id,
+        newBossData.data._id,
+      );
+
+      assert.strictEqual(status, 500);
+      assert.strictEqual(data.errors[0], 'Internal Server Error');
+      assert.strictEqual(userRepository.update.mock.calls.length, 1);
     });
   });
 });

@@ -1,4 +1,4 @@
-const { mock, before, afterEach, after } = require('node:test');
+const { mock, before, beforeEach, afterEach, after } = require('node:test');
 const http = require('node:http');
 
 const mongoose = require('mongoose');
@@ -32,6 +32,10 @@ async function cleanup() {
 module.exports = function setupTestSuite() {
   before(async () => {
     await setup();
+  });
+
+  beforeEach(async () => {
+    await cleanup();
   });
 
   afterEach(async () => {

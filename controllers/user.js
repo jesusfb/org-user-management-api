@@ -128,25 +128,45 @@ exports.changeBoss = async (req, res, next) => {
   const { userId } = req.params;
   const { bossId } = req.body;
 
-  if (userId === bossId) {
-    const error = new Error('User cannot be his own boss');
-    error.statusCode = 400;
-    throw error;
-  }
-
-  if (req.role === config.ROLES.REGULAR_USER) {
-    const error = new Error('Forbidden');
-    error.statusCode = 403;
-    throw error;
-  }
-
-  if (!userService.isSubordinate(bossId, userId)) {
-    const error = new Error('Forbidden');
-    error.statusCode = 403;
-    throw error;
-  }
-
   try {
+    if (userId === bossId) {
+      const error = new Error('User cannot be his own boss');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (req.role === config.ROLES.REGULAR_USER) {
+      const error = new Error('Forbidden');
+      error.statusCode = 403;
+      throw error;
+    }
+
+    if (
+      req.role !== config.ROLES.ADMINISTRATOR &&
+      !userService.isBossOf(req.userId, userId)
+    ) {
+      const error = new Error('Forbidden');
+      error.statusCode = 403;
+      throw error;
+    }
+
+    if (
+      req.role !== config.ROLES.ADMINISTRATOR &&
+      !(await userService.isBossOf(req.userId, userId))
+    ) {
+      const error = new Error('Forbidden');
+      error.statusCode = 403;
+      throw error;
+    }
+
+    if (await userService.isBossOf(userId, bossId)) {
+      const error = new Error(
+        'Cannot assign a subordinate or their subordinates as boss.',
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+
     await userService.changeBoss(bossId, userId);
 
     return res.status(200).json({ message: 'User boss changed successfully' });
