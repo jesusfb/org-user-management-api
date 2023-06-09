@@ -6,7 +6,7 @@ This repository contains a Node.js application that implements a simple organiza
 
 - **Deployment to DigitalOcean**: The application has been successfully deployed on DigitalOcean.
 - **Swagger Documentation**: The application includes Swagger Documentation which can be accessed [here](https://monkfish-app-4se3z.ondigitalocean.app/api-docs/).
-- **Integration Tests**: The application has a suite of integration tests to ensure functionality and reliability.
+- **Integration Tests**: The application has a suite of integration tests to ensure functionality and reliability. These tests use the built-in Node.js test runner, which requires Node.js version 20.2 or higher to operate.
 - **JWT Refresh Token Functionality**: To enhance security, the application uses JWT for user authentication and includes functionality for token refresh.
 - **User Hierarchy Visualization**: An additional /visualize endpoint was added for testing purposes to visualize the user hierarchy in a beautiful JSON format.
 
@@ -51,3 +51,8 @@ The application is deployed to DigitalOcean. You can access the Swagger document
 2. Navigate to the project directory: `cd org-user-management-api`
 3. Install the dependencies: `npm install`
 4. Start the server: `npm start`
+
+## Running Tests
+
+1. For running tests: `npm test`
+2. For development mode tests: `npm run test:dev`
