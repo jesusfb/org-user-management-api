@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "NODE_ENV=test node --test",
-    "test-dev": "NODE_ENV=test node --test --watch test/**/*.js",
+    "test": "NODE_ENV=test PORT=3002 node --test",
+    "test:dev": "NODE_ENV=test PORT=3002 node --test --watch test/api/",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },

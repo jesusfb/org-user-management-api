@@ -3,7 +3,7 @@ module.exports = (err, req, res, next) => {
     if (process.env.NODE_ENV !== 'test') console.error(err);
     const status = err.statusCode || 500;
     res.status(status).json({
-      errors: err.messages || ['Internal Server Error'],
+      errors: err.messages || [err.message] || ['Internal Server Error'],
     });
   } else {
     next();

@@ -19,8 +19,10 @@ app.use('/visualize', visualizeRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use(errorHandler);
 
-app.listen(config.PORT, () => {
-  console.log(`Server started and listening on port ${config.PORT}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(config.PORT, () => {
+    console.log(`Server started and listening on port ${config.PORT}`);
+  });
+}
 
 module.exports = app;
