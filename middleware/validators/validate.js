@@ -1,7 +1,8 @@
 const { validationResult } = require('express-validator');
+const { asyncErrorHandler } = require('#utils');
 
-const validate = (checks) => async (req, res, next) => {
-  try {
+const validate = (checks) =>
+  asyncErrorHandler(async (req, res, next) => {
     await Promise.all(checks.map((check) => check.run(req)));
 
     const errors = validationResult(req);
@@ -16,9 +17,6 @@ const validate = (checks) => async (req, res, next) => {
     error.statusCode = req.customStatusCode || 400;
 
     throw error;
-  } catch (error) {
-    return next(error);
-  }
-};
+  });
 
 module.exports = validate;

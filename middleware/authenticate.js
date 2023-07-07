@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 
 const config = require('#config');
 const { AuthService } = require('#services');
-const { jwtErrorHandler } = require('#utils');
+const { jwtErrorHandlerWrapper } = require('#utils');
 
 const authService = new AuthService(bcrypt, jwt, config);
 
@@ -13,7 +13,7 @@ function returnInvalidToken() {
   throw error;
 }
 
-module.exports = (req, res, next) => {
+module.exports = jwtErrorHandlerWrapper(async (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
@@ -26,18 +26,14 @@ module.exports = (req, res, next) => {
     return returnInvalidToken();
   }
 
-  try {
-    const { userId, role } = authService.verifyToken(token);
+  const { userId, role } = authService.verifyToken(token);
 
-    if (!userId || !role) {
-      return returnInvalidToken();
-    }
-
-    req.userId = userId;
-    req.role = role;
-
-    return next();
-  } catch (error) {
-    throw jwtErrorHandler(error);
+  if (!userId || !role) {
+    return returnInvalidToken();
   }
-};
+
+  req.userId = userId;
+  req.role = role;
+
+  return next();
+});
