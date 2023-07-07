@@ -133,8 +133,8 @@ exports.changeBoss = asyncErrorHandler(async (req, res, next) => {
   }
 
   if (
-    req.role !== config.ROLES.ADMINISTRATOR &&
-    !userService.isBossOf(req.userId, userId)
+    req.role !== config.ROLES.ADMINISTRATOR
+    && !userService.isBossOf(req.userId, userId)
   ) {
     const error = new Error('Forbidden');
     error.statusCode = 403;
@@ -142,8 +142,8 @@ exports.changeBoss = asyncErrorHandler(async (req, res, next) => {
   }
 
   if (
-    req.role !== config.ROLES.ADMINISTRATOR &&
-    !(await userService.isBossOf(req.userId, userId))
+    req.role !== config.ROLES.ADMINISTRATOR
+    && !(await userService.isBossOf(req.userId, userId))
   ) {
     const error = new Error('Forbidden');
     error.statusCode = 403;

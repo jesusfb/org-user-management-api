@@ -29,7 +29,7 @@ async function getToken(username, password) {
     body: JSON.stringify({ username, password }),
   });
 
-  return await response.json();
+  return response.json();
 }
 
 async function getUsers(token) {

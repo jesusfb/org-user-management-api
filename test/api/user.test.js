@@ -5,6 +5,11 @@ const assert = require('node:assert');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
+const { User } = require('#models');
+const { UserRepository } = require('#repositories');
+const config = require('#config');
+const { AuthService } = require('#services');
+
 const setupTestSuite = require('../setup/testSetup');
 const {
   registerUser,
@@ -14,10 +19,6 @@ const {
   changeUserBoss,
   refreshAccessToken,
 } = require('../helpers/user');
-const { User } = require('#models');
-const { UserRepository } = require('#repositories');
-const config = require('#config');
-const { AuthService } = require('#services');
 
 describe('User Registration', () => {
   setupTestSuite();

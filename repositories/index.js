@@ -1,3 +1,3 @@
-const UserRepository = require('../repositories/userRepository');
+const UserRepository = require('./userRepository');
 
 exports.UserRepository = UserRepository;

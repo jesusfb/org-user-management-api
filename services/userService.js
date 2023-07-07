@@ -69,8 +69,8 @@ class UserService {
 
     const oldBoss = await this.userRepository.findById(oldBossId);
     if (
-      oldBoss.subordinates.length === 0 &&
-      oldBoss.role === config.ROLES.BOSS
+      oldBoss.subordinates.length === 0
+      && oldBoss.role === config.ROLES.BOSS
     ) {
       await this.userRepository.update(
         { _id: oldBossId },

@@ -46,11 +46,11 @@ module.exports = ({ fieldName, fieldType, required }) => {
       const user = await userRepository.findById(value);
 
       if (!user) {
-        const user = new Error(
+        const error = new Error(
           `User with provided ${fieldName} does not exist`,
         );
         req.customStatusCode = 404;
-        throw user;
+        throw error;
       }
 
       return true;

@@ -17,11 +17,30 @@ module.exports = {
     'function-paren-newline': 'off',
     'no-await-in-loop': 'off',
     'no-plusplus': 'off',
+    'no-underscore-dangle': 'off',
   },
-  'import/resolver': {
-    node: {
-      extensions: ['.js'],
-      moduleDirectory: ['node_modules'],
+  plugins: ['import'],
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js'],
+        moduleDirectory: ['node_modules'],
+      },
+      alias: {
+        map: [
+          ['#app', './app.js'],
+          ['#controllers', './controllers/index.js'],
+          ['#models', './models/index.js'],
+          ['#repositories', './repositories/index.js'],
+          ['#routes', './routes/index.js'],
+          ['#services', './services/index.js'],
+          ['#config', './config.js'],
+          ['#utils', './utils/index.js'],
+          ['#middleware', './middleware/index.js'],
+          ['#database', './database/database.js'],
+        ],
+        extensions: ['.js'],
+      },
     },
   },
 };

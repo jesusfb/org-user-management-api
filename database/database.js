@@ -3,10 +3,9 @@ const mongoose = require('mongoose');
 const config = require('#config');
 
 const connectDB = async (options) => {
-  let connectionString =
-    process.env.NODE_ENV === 'test'
-      ? config.TEST_DB_CONNECTION_STRING
-      : config.DB_CONNECTION_STRING;
+  const connectionString = process.env.NODE_ENV === 'test'
+    ? config.TEST_DB_CONNECTION_STRING
+    : config.DB_CONNECTION_STRING;
 
   try {
     await mongoose.connect(connectionString, {
