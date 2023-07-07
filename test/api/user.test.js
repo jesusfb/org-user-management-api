@@ -27,7 +27,7 @@ describe('User Registration', () => {
       const { data, status } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
 
       assert.equal(status, 201);
@@ -54,7 +54,7 @@ describe('User Registration', () => {
       const { data, status } = await registerUser(
         'ad',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
 
       assert.equal(status, 400);
@@ -78,7 +78,7 @@ describe('User Registration', () => {
       const { data, status } = await registerUser(
         'admin',
         'admin',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
       );
 
       assert.equal(status, 400);
@@ -92,7 +92,7 @@ describe('User Registration', () => {
       const { data, status } = await registerUser(
         'admin',
         'admin',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         '648188abd50e9168343d094a',
       );
 
@@ -101,11 +101,11 @@ describe('User Registration', () => {
     });
 
     it('should return 409 Conflict for registering user with existing username', async () => {
-      await registerUser('admin', 'admin', 'Administrator');
+      await registerUser('admin', 'admin', config.ROLES.ADMINISTRATOR);
       const { data, status } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
 
       assert.equal(status, 409);
@@ -121,7 +121,7 @@ describe('User Registration', () => {
       const { data, status } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
 
       assert.strictEqual(status, 500);
@@ -136,7 +136,7 @@ describe('User Authentication', () => {
 
   describe('Positive cases', () => {
     it('should return 200 OK and token when credentials are valid', async () => {
-      await registerUser('admin', 'admin', 'Administrator');
+      await registerUser('admin', 'admin', config.ROLES.ADMINISTRATOR);
       const { data, status } = await authenticateUser('admin', 'admin');
 
       assert.equal(status, 200);
@@ -150,7 +150,7 @@ describe('User Authentication', () => {
 
   describe('Negative cases', () => {
     it('should return 401 Unauthorized for invalid credentials', async () => {
-      await registerUser('admin', 'admin', 'Administrator');
+      await registerUser('admin', 'admin', config.ROLES.ADMINISTRATOR);
       const { data, status } = await authenticateUser('admin', 'wrongPassword');
 
       assert.equal(status, 401);
@@ -212,18 +212,18 @@ describe('Get Users', () => {
       const { data: administratorData } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
       const { data: bossData } = await registerUser(
         'boss1',
         'boss1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       await registerUser(
         'reg_user_2',
         'reg_user_1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         bossData.data._id,
       );
       const { token } = await getToken('admin', 'admin');
@@ -250,18 +250,18 @@ describe('Get Users', () => {
       const { data: administratorData } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
       const { data: bossData } = await registerUser(
         'boss1',
         'boss1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { data: userData } = await registerUser(
         'reg_user_1',
         'reg_user_1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         bossData.data._id,
       );
       const { token } = await getToken('boss1', 'boss1');
@@ -287,18 +287,18 @@ describe('Get Users', () => {
       const { data: administratorData } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
       const { data: bossData } = await registerUser(
         'boss1',
         'boss1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { data: userData } = await registerUser(
         'reg_user_1',
         'reg_user_1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         bossData.data._id,
       );
       const { token } = await getToken('reg_user_1', 'reg_user_1');
@@ -341,7 +341,7 @@ describe('Get Users', () => {
       });
       const userRepository = new UserRepository(User);
 
-      await registerUser('admin', 'admin', 'Administrator');
+      await registerUser('admin', 'admin', config.ROLES.ADMINISTRATOR);
       const { token } = await getToken('admin', 'admin');
       const { data, status } = await getUsers(token);
 
@@ -360,24 +360,24 @@ describe('Change user boss', () => {
       const { data: administratorData } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
       const { data: bossData } = await registerUser(
         'boss1',
         'boss1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { data: subordinateData } = await registerUser(
         'subordinate',
         'subordinate',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         bossData.data._id,
       );
       const { data: newBossData } = await registerUser(
         'newboss',
         'newboss',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { token } = await getToken('boss1', 'boss1');
@@ -396,7 +396,7 @@ describe('Change user boss', () => {
       const { data: administratorData } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
       const { token } = await getToken('admin', 'admin');
       const { status } = await changeUserBoss(
@@ -412,12 +412,12 @@ describe('Change user boss', () => {
       const { data: administratorData } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
       const { data: bossData } = await registerUser(
         'boss1',
         'boss1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { token } = await getToken('boss1', 'boss1');
@@ -434,24 +434,24 @@ describe('Change user boss', () => {
       const { data: administratorData } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
       const { data: bossData } = await registerUser(
         'boss1',
         'boss1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { data: subordinateData } = await registerUser(
         'subordinate',
         'subordinate',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         bossData.data._id,
       );
       const { data: newBossData } = await registerUser(
         'newboss',
         'newboss',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { status } = await changeUserBoss(
@@ -467,24 +467,24 @@ describe('Change user boss', () => {
       const { data: administratorData } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
       const { data: bossData } = await registerUser(
         'boss1',
         'boss1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { data: subordinateData } = await registerUser(
         'subordinate',
         'subordinate',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         bossData.data._id,
       );
       const { data: newBossData } = await registerUser(
         'newboss',
         'newboss',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { status } = await changeUserBoss(
@@ -500,24 +500,24 @@ describe('Change user boss', () => {
       const { data: administratorData } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
       const { data: bossData } = await registerUser(
         'boss1',
         'boss1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { data: subordinateData } = await registerUser(
         'subordinate',
         'subordinate',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         bossData.data._id,
       );
       const { data: newBossData } = await registerUser(
         'newboss',
         'newboss',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { token } = await getToken('subordinate', 'subordinate');
@@ -534,24 +534,24 @@ describe('Change user boss', () => {
       const { data: administratorData } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
       const { data: bossData } = await registerUser(
         'boss1',
         'boss1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { data: subordinateData } = await registerUser(
         'subordinate',
         'subordinate',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         bossData.data._id,
       );
       const { data: newBossData } = await registerUser(
         'newboss',
         'newboss',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { token } = await getToken('newboss', 'newboss');
@@ -568,24 +568,24 @@ describe('Change user boss', () => {
       const { data: administratorData } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
       const { data: bossData } = await registerUser(
         'boss1',
         'boss1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { data: subordinateData } = await registerUser(
         'subordinate',
         'subordinate',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         bossData.data._id,
       );
       const { data: newBossData } = await registerUser(
         'newboss',
         'newboss',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { token } = await getToken('subordinate', 'subordinate');
@@ -603,18 +603,18 @@ describe('Change user boss', () => {
       const { data: administratorData } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
       const { data: bossData } = await registerUser(
         'boss1',
         'boss1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { data: subordinateData } = await registerUser(
         'subordinate',
         'subordinate',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         bossData.data._id,
       );
       const { token } = await getToken('boss1', 'boss1');
@@ -632,12 +632,12 @@ describe('Change user boss', () => {
       const { data: administratorData } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
       const { data: bossData } = await registerUser(
         'boss1',
         'boss1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { token } = await getToken('admin', 'admin');
@@ -655,12 +655,12 @@ describe('Change user boss', () => {
       const { data: administratorData } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
       const { data: subordinateData } = await registerUser(
         'subordinate',
         'subordinate',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { token } = await getToken('admin', 'admin');
@@ -678,24 +678,24 @@ describe('Change user boss', () => {
       const { data: administratorData } = await registerUser(
         'admin',
         'admin',
-        'Administrator',
+        config.ROLES.ADMINISTRATOR,
       );
       const { data: bossData } = await registerUser(
         'boss1',
         'boss1',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { data: subordinateData } = await registerUser(
         'subordinate',
         'subordinate',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         bossData.data._id,
       );
       const { data: newBossData } = await registerUser(
         'newboss',
         'newboss',
-        'Regular User',
+        config.ROLES.REGULAR_USER,
         administratorData.data._id,
       );
       const { token } = await getToken('boss1', 'boss1');
@@ -722,7 +722,7 @@ describe('Refresh Token', () => {
 
   describe('Positive cases', () => {
     it('should return 200 OK and a new access token when refreshing a valid refresh token', async () => {
-      await registerUser('admin', 'admin', 'Administrator');
+      await registerUser('admin', 'admin', config.ROLES.ADMINISTRATOR);
       const { data: authData } = await authenticateUser('admin', 'admin');
       const { status, data } = await refreshAccessToken(authData?.refreshToken);
 
@@ -740,7 +740,7 @@ describe('Refresh Token', () => {
     });
 
     it('should return 401 Unauthorized when an invalid refresh token is provided', async () => {
-      await registerUser('admin', 'admin', 'Administrator');
+      await registerUser('admin', 'admin', config.ROLES.ADMINISTRATOR);
       await authenticateUser('admin', 'admin');
       const { status, data } = await refreshAccessToken(
         'invalid_refresh_token',
@@ -758,7 +758,7 @@ describe('Refresh Token', () => {
         throw error;
       });
 
-      await registerUser('admin', 'admin', 'Administrator');
+      await registerUser('admin', 'admin', config.ROLES.ADMINISTRATOR);
       const { data: authData } = await authenticateUser('admin', 'admin');
       const { status, data } = await refreshAccessToken(authData?.refreshToken);
 

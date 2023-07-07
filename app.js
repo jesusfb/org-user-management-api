@@ -6,6 +6,9 @@ const config = require('#config');
 const connectDB = require('#database');
 const { errorHandler } = require('#middleware');
 const specs = require('./swaggerDefinition');
+const { checkEnvironmentVariables } = require('#utils');
+
+checkEnvironmentVariables();
 
 const app = express();
 

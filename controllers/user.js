@@ -56,7 +56,7 @@ exports.getUsers = async (req, res, next) => {
 exports.registerUser = async (req, res, next) => {
   try {
     const { username, password, role, bossId } = req.body;
-    const hashedPassword = authService.hashPassword(password);
+    const hashedPassword = await authService.hashPassword(password);
 
     let user = null;
     const session = await User.startSession();
@@ -75,8 +75,8 @@ exports.registerUser = async (req, res, next) => {
         const bossUser = await userRepository.findById(bossId);
         bossUser.subordinates.push(user.id);
 
-        if (bossUser.role === 'Regular User') {
-          bossUser.role = 'Boss';
+        if (bossUser.role === config.ROLES.REGULAR_USER) {
+          bossUser.role = config.ROLES.BOSS;
         }
 
         await bossUser.save({ session });
@@ -108,8 +108,12 @@ exports.authenticateUser = async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const user = await userRepository.findByUsername(username);
+    const correctPassword = await authService.checkPassword(
+      password,
+      user.password,
+    );
 
-    if (!user || !authService.checkPassword(password, user.password)) {
+    if (!user || !correctPassword) {
       const error = new Error('Invalid credentials');
       error.statusCode = 401;
       throw error;
@@ -175,7 +179,7 @@ exports.changeBoss = async (req, res, next) => {
   }
 };
 
-exports.refreshToken = async (req, res, next) => {
+exports.refreshToken = (req, res, next) => {
   try {
     const { refreshToken } = req.body;
 

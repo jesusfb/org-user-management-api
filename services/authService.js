@@ -5,12 +5,12 @@ class AuthService {
     this.config = config;
   }
 
-  hashPassword(password) {
-    return this.hasher.hashSync(password, 8);
+  async hashPassword(password) {
+    return this.hasher.hash(password, 8);
   }
 
-  checkPassword(password, hashedPassword) {
-    return this.hasher.compareSync(password, hashedPassword);
+  async checkPassword(password, hashedPassword) {
+    return this.hasher.compare(password, hashedPassword);
   }
 
   generateAccessToken(

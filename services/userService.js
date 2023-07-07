@@ -1,3 +1,5 @@
+const config = require('#config');
+
 class UserService {
   constructor(userRepository) {
     this.userRepository = userRepository;
@@ -48,10 +50,10 @@ class UserService {
 
     await this.userRepository.update({ _id: userId }, { bossId });
 
-    if (newBoss.role === 'Regular User') {
+    if (newBoss.role === config.ROLES.REGULAR_USER) {
       await this.userRepository.update(
         { _id: bossId },
-        { $push: { subordinates: userId }, $set: { role: 'Boss' } },
+        { $push: { subordinates: userId }, $set: { role: config.ROLES.BOSS } },
       );
     } else {
       await this.userRepository.update(
@@ -66,10 +68,13 @@ class UserService {
     );
 
     const oldBoss = await this.userRepository.findById(oldBossId);
-    if (oldBoss.subordinates.length === 0 && oldBoss.role === 'Boss') {
+    if (
+      oldBoss.subordinates.length === 0 &&
+      oldBoss.role === config.ROLES.BOSS
+    ) {
       await this.userRepository.update(
         { _id: oldBossId },
-        { $set: { role: 'Regular User' } },
+        { $set: { role: config.ROLES.REGULAR_USER } },
       );
     }
   }
